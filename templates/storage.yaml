@@ -28,7 +28,7 @@ parameters:
   type: gp2
 
 ---
-apiVersion: apps/v1beta1
+apiVersion: apps/v1
 kind: StatefulSet
 metadata:
   name: {{ .Release.Name }}-zipkin-cassandra
@@ -40,6 +40,9 @@ metadata:
 spec:
   serviceName: zipkin-cassandra
   replicas: {{ .Values.cassandra.replicas }}
+  selector:
+    matchLabels:
+      app: zipkin-cassandra
   volumeClaimTemplates:
   - metadata:
       name: data-storage
@@ -91,10 +94,10 @@ spec:
         resources:
           limits:
             cpu: "{{ .Values.cassandra.resources.cpuLimit }}"
-            memory: "{{ .Values.cassandra.resources.ramMbLimit }}Mi"
+            memory: "{{ .Values.cassandra.resources.ramMb }}Mi" # TODO fix this, this field id mi but the value is mb. There will be slight wastage
           requests:
             cpu: "{{ .Values.cassandra.resources.cpuRequest }}"
-            memory: "{{ .Values.cassandra.resources.ramMbRequest }}Mi"
+            memory: "{{ .Values.cassandra.resources.ramMb }}Mi" # TODO fix this, this field id mi but the value is mb. There will be slight wastage
         volumeMounts:
           - name: data-storage
             mountPath: /cassandra/data
